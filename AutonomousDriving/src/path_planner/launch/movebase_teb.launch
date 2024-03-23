@@ -1,0 +1,29 @@
+<launch>
+
+  <!--Launch perception file-->
+  <include file="$(find perception)/launch/perception.launch" />
+
+  <!--Launch move base node-->
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base">
+    <rosparam file="$(find path_planner)/config/costmap_common_existing_map_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find path_planner)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find path_planner)/config/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find path_planner)/config/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find path_planner)/config/local_planner_teb.yaml" command="load" />
+    <rosparam file="$(find path_planner)/config/base_global_planner_params.yaml" command="load" />
+    <rosparam file="$(find path_planner)/config/move_base_params.yaml" command="load" />
+    
+  </node>
+
+  <arg name="map_file" default="$(find path_planner)/maps/map5.yaml"/>
+  
+  <node pkg="map_server" type="map_server" name="map_server" args="$(arg map_file)" />
+  
+  <node pkg="path_planner" type="twist_to_ackermann" name="twist_to_ackermann_node"/>
+  <node pkg="perception" type="trafficlight" name="trafficlight_node"/>
+  <node pkg="path_planner" type="cmd_multiplier" name="cmd_multiplier_node"/>
+
+</launch>
+
+
+

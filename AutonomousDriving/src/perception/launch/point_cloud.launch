@@ -1,0 +1,51 @@
+<launch>
+  <arg name="depth_info_topic"               default="/realsense/depth/camera_info"/>
+  <arg name="depth_image_topic"              default="/realsense/depth/image"/>
+  <!-- <arg name="depth_registered_info_topic"    default="Registered/DepthCamera/camera_info"/> -->
+  <!-- <arg name="depth_registered_image_topic"   default="Registered/DepthCamera/image_raw"/> -->
+  <arg name="rgb_camera_info"                default="/realsense/rgb/left_image_info"/>
+  <arg name="rgb_image_rect"                 default="/realsense/rgb/left_image_raw"/>
+  <arg name="point_cloud"                    default="Registered/DepthCamera/point_cloud"/>
+  
+  <!-- Nodelet to "register" a depth image -->
+  <node pkg="nodelet" type="nodelet" name="nodelet_manager" args="manager" />
+  <!-- <node pkg="nodelet" type="nodelet" name="register_depth" args="load depth_image_proc/register nodelet_manager"> -->
+
+    <!-- subscribe -->
+    <!-- <remap from="rgb/camera_info"    to="$(arg rgb_camera_info)"/>
+    <remap from="depth/camera_info"  to="$(arg depth_info_topic)"/>
+    <remap from="depth/image_rect"   to="$(arg depth_image_topic)"/> -->
+
+    <!-- publish -->
+    <!-- <remap from="depth_registered/camera_info"   to="$(arg depth_registered_info_topic)"/>
+    <remap from="depth_registered/image_rect"   to="$(arg depth_registered_image_topic)"/>
+
+  </node> -->
+
+  <!-- Nodelet to combine registered depth image and RGB image into XYZRGB point cloud -->
+  <!-- <node pkg="nodelet" type="nodelet" name="register_point_cloud" args="load depth_image_proc/point_cloud_xyzrgb nodelet_manager"> -->
+    
+    <!-- subscribe -->
+    <!-- <remap from="rgb/camera_info"             to="$(arg rgb_camera_info)"/>
+    <remap from="rgb/image_rect_color"        to="$(arg rgb_image_rect)"/>
+    <remap from="depth_registered/image_rect" to="$(arg depth_registered_image_rect)"/> -->
+
+    <!-- publish -->
+    <!-- <remap from="depth_registered/points"   to="$(arg point_cloud)"/>
+
+  </node> -->
+  <!-- Above commented code only for rgb pointcloud -->
+
+  <node pkg="nodelet" type="nodelet" name="register_point_cloud" args="load depth_image_proc/point_cloud_xyz nodelet_manager --no-bond">
+    
+    <!-- subscribe -->  
+    <remap from="camera_info" to="$(arg depth_info_topic)" />
+    <remap from="image_rect" to="$(arg depth_image_topic)" />
+
+    <!-- publish -->
+    <remap from="points" to="$(arg point_cloud)" />
+
+
+  </node>
+
+</launch>
